@@ -9,18 +9,21 @@ const basename = path.basename(__filename);
 // const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
 
-var sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: "postgres",
-    protocol: "postgres",
-    port: process.env.DB_PORT,
-    host: process.env.DB_HOST,
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false,
+var sequelize = new Sequelize(
+    "postgres://gesmxhqx:yaxI2Dgn1Haj7B-HaoXoxBk1j_QHQkrB@peanut.db.elephantsql.com/gesmxhqx",
+    {
+        dialect: "postgres",
+        protocol: "postgres",
+        port: process.env.DB_PORT,
+        host: process.env.DB_HOST,
+        dialectOptions: {
+            ssl: {
+                require: true,
+                rejectUnauthorized: false,
+            },
         },
-    },
-});
+    }
+);
 
 fs.readdirSync(__dirname)
     .filter((file) => {
@@ -55,6 +58,7 @@ db.WithdrawSetting = require("./withdrawsetting")(
 );
 db.Withdraw = require("./withdraw")(sequelize, Sequelize.DataTypes);
 db.WithdrawMethod = require("./withdrawmethod")(sequelize, Sequelize.DataTypes);
+db.Contact = require("./contact")(sequelize, Sequelize.DataTypes);
 
 db.User.hasMany(db.Dashboard, {
     foreignKey: "userId",
@@ -80,5 +84,12 @@ db.WithdrawMethod.belongsTo(db.User, {
     foreignKey: "userId",
     as: "user",
 });
-
+db.User.hasMany(db.Contact, {
+    foreignKey: "userId",
+    as: "contact",
+});
+db.Contact.belongsTo(db.User, {
+    foreignKey: "userId",
+    as: "user",
+});
 module.exports = db;

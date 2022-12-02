@@ -43,6 +43,8 @@ app.get("/", function (req, res, next) {
 require("./routes/user.routes")(app, sequelize);
 require("./routes/dashboard.routes")(app, sequelize);
 require("./routes/meta.routes")(app, sequelize);
+require("./routes/withdraw.routes")(app, sequelize);
+require("./routes/contact.routes")(app, sequelize);
 
 // Error handlers
 app.use(function fourOhFourHandler(req, res) {

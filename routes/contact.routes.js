@@ -1,6 +1,5 @@
 const db = require("../models");
-const Dashboard = db.Dashboard;
-
+const Contact = db.Contact;
 module.exports = function (app) {
     app.use(function (req, res, next) {
         res.header(
@@ -10,18 +9,15 @@ module.exports = function (app) {
         next();
     });
 
-    app.post("/api/dashboard/create", async (req, res) => {
-        await Dashboard.create({
+    //add contact message
+    app.post("/api/contact/add", async (req, res) => {
+        await Contact.create({
             userId: req.body.userId,
-            balance: req.body.balance,
-            equity: req.body.equity,
-            startingbalance: req.body.startingbalance,
-            netprofit: req.body.netprofit,
-            netloss: req.body.netloss,
-            trades: req.body.trades,
+            issue: req.body.issue,
+            message: req.body.message,
         })
             .then((result) => {
-                res.json({ msg: "Dashboard data saved", result });
+                res.json({ msg: "Contact message saved", result });
             })
             .catch((err) => {
                 console.log(err);
@@ -29,8 +25,9 @@ module.exports = function (app) {
             });
     });
 
-    app.post("/api/dashboard/all", async (req, res) => {
-        await Dashboard.findAll({ where: { userId: req.body.userId } })
+    //get all contact messages
+    app.post("/api/contact/all", async (req, res) => {
+        await Contact.findAll({ where: { userId: req.body.userId } })
             .then((result) => {
                 res.json({ data: result });
             })
