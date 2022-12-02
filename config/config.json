@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "gesmxhqx",
+    "password": "yaxI2Dgn1Haj7B-HaoXoxBk1j_QHQkrB",
+    "database": "gesmxhqx",
+    "host": "peanut.db.elephantsql.com",
+    "dialect": "postgres"
+  }
+}
