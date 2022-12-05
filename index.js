@@ -4,16 +4,45 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
+const passport = require("passport");
+var session = require("express-session");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 // Routes and middleware
 // app.use(/* ... */)
 // app.get(/* ... */)
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
+app.use(cors());
 // app.use(cookieParser());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
+//session
+app.use(
+    session({
+        secret: process.env.SECRET,
+        resave: true,
+        saveUninitialized: true,
+    })
+);
+//helmet
+app.use(helmet());
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+app.use(limiter);
+
+//passport
+app.use(passport.initialize());
+app.use(passport.session());
+require("./config/passport")(passport);
+
+//sequilize
 const { Sequelize } = require("sequelize");
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
@@ -40,11 +69,12 @@ connectDB();
 app.get("/", function (req, res, next) {
     res.json({ msg: "API Working" });
 });
-require("./routes/user.routes")(app, sequelize);
-require("./routes/dashboard.routes")(app, sequelize);
-require("./routes/meta.routes")(app, sequelize);
-require("./routes/withdraw.routes")(app, sequelize);
-require("./routes/contact.routes")(app, sequelize);
+require("./routes/user.routes")(app, passport);
+require("./routes/admin.routes")(app, passport);
+require("./routes/dashboard.routes")(app, passport);
+require("./routes/meta.routes")(app, passport);
+require("./routes/withdraw.routes")(app, passport);
+require("./routes/contact.routes")(app, passport);
 
 // Error handlers
 app.use(function fourOhFourHandler(req, res) {

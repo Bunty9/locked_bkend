@@ -51,6 +51,7 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 db.User = require("./user")(sequelize, Sequelize.DataTypes);
+db.Admin = require("./admin")(sequelize, Sequelize.DataTypes);
 db.Dashboard = require("./dashboard")(sequelize, Sequelize.DataTypes);
 db.WithdrawSetting = require("./withdrawsetting")(
     sequelize,

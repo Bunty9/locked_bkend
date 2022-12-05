@@ -1,6 +1,9 @@
 const db = require("../models");
+const CryptoJS = require("crypto-js");
+const { checkDuplicate } = require("../controllers/checkDuplicate");
+const jwt = require("jsonwebtoken");
 
-module.exports = function (app, sequelize) {
+module.exports = function (app, passport) {
     app.use(function (req, res, next) {
         res.header(
             "Access-Control-Allow-Headers",
@@ -10,24 +13,30 @@ module.exports = function (app, sequelize) {
     });
     const User = db.User;
 
-    app.post("/api/auth/signup", async (req, res) => {
+    app.post("/api/auth/signup", [checkDuplicate()], async (req, res) => {
         console.log(req.body);
         const email = req.body.email;
         const username = req.body.username;
         const phone = req.body.phone;
         const address = req.body.address;
-        const password = req.body.password;
+
+        const hashedPass = CryptoJS.AES.encrypt(
+            req.body.password,
+            process.env.CRYPTO_SECRET
+        ).toString();
 
         await User.create({
             username: username,
             email: email,
-            password: password,
+            password: hashedPass,
             phone: phone,
             address: address,
         })
             .then(async (result) => {
+                const payload = { email: result.email };
+                const token = jwt.sign(payload, process.env.SECRET);
                 console.log(result);
-                res.status(200).send({ result });
+                res.json({ msg: "login success", result, token });
             })
             .catch((err) => {
                 console.log(err);
@@ -36,19 +45,26 @@ module.exports = function (app, sequelize) {
     });
 
     app.post("/api/auth/signin", async (req, res) => {
-        const username = req.body.username;
+        const email = req.body.email;
         const password = req.body.password;
 
-        await User.findOne({ where: { username: username } })
+        await User.findOne({ where: { email: email } })
             .then(async (result) => {
                 if (!result) {
                     res.json({
                         err: 404,
-                        msg: "No user found with the requested username",
+                        msg: "No user found with the requested email",
                     });
                 } else {
-                    if (result.password === password) {
-                        res.json({ msg: "login success" });
+                    const bytes = CryptoJS.AES.decrypt(
+                        result.password,
+                        process.env.CRYPTO_SECRET
+                    );
+                    const resultPassword = bytes.toString(CryptoJS.enc.Utf8);
+                    if (resultPassword === password) {
+                        const payload = { email: result.email };
+                        const token = jwt.sign(payload, process.env.SECRET);
+                        res.json({ msg: "login success", token: token });
                     } else {
                         res.status(401).json({
                             msg: "Password did not match",
@@ -64,9 +80,9 @@ module.exports = function (app, sequelize) {
 
     app.get(
         "/api/users/all",
-
+        [passport.authenticate("admin_auth", { session: false })],
         async (req, res) => {
-            await User.findAll()
+            await User.findAll({ attributes: { exclude: ["password"] } })
                 .then((result) => {
                     res.json({ data: result });
                 })
@@ -76,6 +92,4 @@ module.exports = function (app, sequelize) {
                 });
         }
     );
-
-    
 };

@@ -8,7 +8,7 @@ let serverName = "MetaQuotes-Demo";
 
 const api = new MetaApi(token);
 
-module.exports = function (app, sequelize) {
+module.exports = function (app, passport) {
     app.use(function (req, res, next) {
         res.header(
             "Access-Control-Allow-Headers",
@@ -16,105 +16,135 @@ module.exports = function (app, sequelize) {
         );
         next();
     });
-    app.get("/api/meta/acc", async (req, res) => {
-        try {
-            let accounts = await api.metatraderAccountApi.getAccounts();
-            let account = accounts.find(
-                (a) => a.login === login && a.type.startsWith("cloud")
-            );
-            await account.waitConnected();
-            let connection = account.getStreamingConnection();
-            await connection.connect();
-            await connection.waitSynchronized();
-            let terminalState = connection.terminalState;
-            let acc = terminalState.accountInformation;
-            console.log(
-                "account information:",
-                terminalState.accountInformation
-            );
-            await connection.close();
-            res.json({ msg: "terminal data", acc });
-        } catch (error) {
-            res.json({ msg: "error", error });
+    app.get(
+        "/api/meta/acc",
+        [passport.authenticate("user_auth", { session: false })],
+        async (req, res) => {
+            try {
+                let accounts = await api.metatraderAccountApi.getAccounts();
+                let account = accounts.find(
+                    (a) => a.login === login && a.type.startsWith("cloud")
+                );
+                await account.waitConnected();
+                let connection = account.getStreamingConnection();
+                console.log(connection.host);
+                await connection.connect();
+                await connection.waitSynchronized();
+                let terminalState = connection.terminalState;
+                let acc = terminalState.accountInformation;
+                let positions = terminalState.positions;
+                let orders = terminalState.orders;
+                let historyStorage = terminalState.historyStorage;
+                let deals = historyStorage.deals;
+                let historyOrders = historyStorage.historyOrders;
+                await connection.close();
+                res.json({
+                    "account information": acc,
+                    positions: positions,
+                    orders: orders,
+                    deals: deals,
+                    "history orders": historyOrders,
+                });
+            } catch (error) {
+                res.json({ msg: "error", error });
+            }
         }
-    });
-    app.get("/api/meta/pos", async (req, res) => {
-        try {
-            let accounts = await api.metatraderAccountApi.getAccounts();
-            let account = accounts.find(
-                (a) => a.login === login && a.type.startsWith("cloud")
-            );
-            await account.waitConnected();
-            let connection = account.getStreamingConnection();
-            await connection.connect();
-            await connection.waitSynchronized();
-            let terminalState = connection.terminalState;
-            let positions = terminalState.positions;
-            await connection.close();
-            res.json({ msg: "terminal data", positions });
-        } catch (error) {
-            res.json({ msg: "error", error });
+    );
+    app.get(
+        "/api/meta/pos",
+        [passport.authenticate("user_auth", { session: false })],
+        async (req, res) => {
+            try {
+                let accounts = await api.metatraderAccountApi.getAccounts();
+                let account = accounts.find(
+                    (a) => a.login === login && a.type.startsWith("cloud")
+                );
+                await account.waitConnected();
+                let connection = account.getStreamingConnection();
+                await connection.connect();
+                await connection.waitSynchronized();
+                let terminalState = connection.terminalState;
+                let positions = terminalState.positions;
+                await connection.close();
+                res.json({ msg: "terminal data", positions });
+            } catch (error) {
+                res.json({ msg: "error", error });
+            }
         }
-    });
-    app.get("/api/meta/orders", async (req, res) => {
-        try {
-            let accounts = await api.metatraderAccountApi.getAccounts();
-            let account = accounts.find(
-                (a) => a.login === login && a.type.startsWith("cloud")
-            );
-            await account.waitConnected();
-            let connection = account.getStreamingConnection();
-            await connection.connect();
-            await connection.waitSynchronized();
-            let terminalState = connection.terminalState;
-            let orders = terminalState.orders;
-            await connection.close();
-            res.json({ msg: "terminal data", orders });
-        } catch (error) {
-            res.json({ msg: "error", error });
+    );
+    app.get(
+        "/api/meta/orders",
+        [passport.authenticate("user_auth", { session: false })],
+        async (req, res) => {
+            try {
+                let accounts = await api.metatraderAccountApi.getAccounts();
+                let account = accounts.find(
+                    (a) => a.login === login && a.type.startsWith("cloud")
+                );
+                await account.waitConnected();
+                let connection = account.getStreamingConnection();
+                await connection.connect();
+                await connection.waitSynchronized();
+                let terminalState = connection.terminalState;
+                let orders = terminalState.orders;
+                await connection.close();
+                res.json({ msg: "terminal data", orders });
+            } catch (error) {
+                res.json({ msg: "error", error });
+            }
         }
-    });
+    );
 
-    app.get("/api/meta/margin", async (req, res) => {
-        try {
-            let accounts = await api.metatraderAccountApi.getAccounts();
-            let account = accounts.find(
-                (a) => a.login === login && a.type.startsWith("cloud")
-            );
-            await account.waitConnected();
-            let connection = account.getStreamingConnection();
-            await connection.connect();
-            await connection.waitSynchronized();
-            const margin = await connection.calculateMargin({
-                symbol: "GBPUSD",
-                type: "ORDER_TYPE_BUY",
-                volume: 0.1,
-                openPrice: 1.1,
-            });
-            await connection.close();
-            res.json({ msg: "terminal data", margin });
-        } catch (error) {
-            res.json({ msg: "error", error });
+    app.get(
+        "/api/meta/margin",
+        [passport.authenticate("user_auth", { session: false })],
+        async (req, res) => {
+            try {
+                let accounts = await api.metatraderAccountApi.getAccounts();
+                let account = accounts.find(
+                    (a) => a.login === login && a.type.startsWith("cloud")
+                );
+                await account.waitConnected();
+                let connection = account.getStreamingConnection();
+                await connection.connect();
+                await connection.waitSynchronized();
+                const margin = await connection.calculateMargin({
+                    symbol: "GBPUSD",
+                    type: "ORDER_TYPE_BUY",
+                    volume: 0.1,
+                    openPrice: 1.1,
+                });
+                await connection.close();
+                res.json({ msg: "terminal data", margin });
+            } catch (error) {
+                res.json({ msg: "error", error });
+            }
         }
-    });
+    );
 
-    app.get("/api/meta/history", async (req, res) => {
-        try {
-            let accounts = await api.metatraderAccountApi.getAccounts();
-            let account = accounts.find(
-                (a) => a.login === login && a.type.startsWith("cloud")
-            );
-            await account.waitConnected();
-            let connection = account.getStreamingConnection();
-            await connection.connect();
-            await connection.waitSynchronized();
-            const historyStorage = connection.historyStorage;
-            const history = historyStorage.historyOrders.slice(-5);
-            await connection.close();
-            console.log(history);
-            res.json({ msg: "terminal data", history });
-        } catch (error) {
-            res.json({ msg: "error", error });
+    app.get(
+        "/api/meta/history",
+        [passport.authenticate("user_auth", { session: false })],
+        async (req, res) => {
+            try {
+                let accounts = await api.metatraderAccountApi.getAccounts();
+                let account = accounts.find(
+                    (a) => a.login === login && a.type.startsWith("cloud")
+                );
+                await account.waitConnected();
+                let connection = account.getStreamingConnection();
+                await connection.connect();
+                await connection.waitSynchronized();
+                const historyStorage = connection.historyStorage;
+                const history = historyStorage.historyOrders.slice(-5);
+                await connection.close();
+                console.log(history);
+                res.json({ msg: "terminal data", history });
+            } catch (error) {
+                res.json({ msg: "error", error });
+            }
         }
-    });
+    );
 };
+
+//history orders
