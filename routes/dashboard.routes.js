@@ -9,30 +9,6 @@ module.exports = function (app, passport) {
         );
         next();
     });
-
-    app.post(
-        "/api/dashboard/create",
-        [passport.authenticate("user_auth", { session: false })],
-        async (req, res) => {
-            await Dashboard.create({
-                userId: req.user.id,
-                balance: req.body.balance,
-                equity: req.body.equity,
-                startingbalance: req.body.startingbalance,
-                netprofit: req.body.netprofit,
-                netloss: req.body.netloss,
-                trades: req.body.trades,
-            })
-                .then((result) => {
-                    res.json({ msg: "Dashboard data saved", result });
-                })
-                .catch((err) => {
-                    console.log(err);
-                    res.json({ msg: ">> Error while saving data: ", err });
-                });
-        }
-    );
-
     app.get(
         "/api/user/getdashboard",
         [passport.authenticate("user_auth", { session: false })],
