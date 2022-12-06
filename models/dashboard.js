@@ -15,12 +15,23 @@ module.exports = (sequelize, DataTypes) => {
   }
   dashboard.init({
     userId: DataTypes.INTEGER,
+    broker: DataTypes.STRING,
+    currency: DataTypes.STRING,
+    server: DataTypes.STRING,
     balance: DataTypes.STRING,
     equity: DataTypes.STRING,
-    startingbalance: DataTypes.STRING,
-    netprofit: DataTypes.STRING,
-    netloss: DataTypes.STRING,
-    trades: DataTypes.STRING
+    margin: DataTypes.STRING,
+    freeMargin: DataTypes.STRING,
+    leverage: DataTypes.STRING,
+    marginLevel: DataTypes.STRING,
+    type: DataTypes.STRING,
+    name: DataTypes.STRING,
+    login: DataTypes.STRING,
+    credit: DataTypes.STRING,
+    platform: DataTypes.STRING,
+    marginMode: DataTypes.STRING,
+    tradeAllowed: DataTypes.STRING,
+    investorMode: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'dashboard',

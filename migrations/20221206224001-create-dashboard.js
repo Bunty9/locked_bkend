@@ -12,22 +12,55 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER
       },
+      broker: {
+        type: Sequelize.STRING
+      },
+      currency: {
+        type: Sequelize.STRING
+      },
+      server: {
+        type: Sequelize.STRING
+      },
       balance: {
         type: Sequelize.STRING
       },
       equity: {
         type: Sequelize.STRING
       },
-      startingbalance: {
+      margin: {
         type: Sequelize.STRING
       },
-      netprofit: {
+      freeMargin: {
         type: Sequelize.STRING
       },
-      netloss: {
+      leverage: {
         type: Sequelize.STRING
       },
-      trades: {
+      marginLevel: {
+        type: Sequelize.STRING
+      },
+      type: {
+        type: Sequelize.STRING
+      },
+      name: {
+        type: Sequelize.STRING
+      },
+      login: {
+        type: Sequelize.STRING
+      },
+      credit: {
+        type: Sequelize.STRING
+      },
+      platform: {
+        type: Sequelize.STRING
+      },
+      marginMode: {
+        type: Sequelize.STRING
+      },
+      tradeAllowed: {
+        type: Sequelize.STRING
+      },
+      investorMode: {
         type: Sequelize.STRING
       },
       createdAt: {

@@ -33,8 +33,8 @@ module.exports = function (app, passport) {
         }
     );
 
-    app.post(
-        "/api/dashboard/all",
+    app.get(
+        "/api/user/getdashboard",
         [passport.authenticate("user_auth", { session: false })],
         async (req, res) => {
             await Dashboard.findAll({ where: { userId: req.user.id } })

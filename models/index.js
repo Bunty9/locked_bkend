@@ -60,6 +60,8 @@ db.WithdrawSetting = require("./withdrawsetting")(
 db.Withdraw = require("./withdraw")(sequelize, Sequelize.DataTypes);
 db.WithdrawMethod = require("./withdrawmethod")(sequelize, Sequelize.DataTypes);
 db.Contact = require("./contact")(sequelize, Sequelize.DataTypes);
+db.Position = require("./position")(sequelize, Sequelize.DataTypes);
+db.Order = require("./order")(sequelize, Sequelize.DataTypes);
 
 db.User.hasMany(db.Dashboard, {
     foreignKey: "userId",
@@ -93,4 +95,29 @@ db.Contact.belongsTo(db.User, {
     foreignKey: "userId",
     as: "user",
 });
+db.User.hasMany(db.Withdraw, {
+    foreignKey: "userId",
+    as: "withdraws",
+});
+db.Withdraw.belongsTo(db.User, {
+    foreignKey: "userId",
+    as: "user",
+});
+db.User.hasMany(db.Position, {
+    foreignKey: "userId",
+    as: "positions",
+});
+db.Position.belongsTo(db.User, {
+    foreignKey: "userId",
+    as: "user",
+});
+db.User.hasMany(db.Order, {
+    foreignKey: "userId",
+    as: "orders",
+});
+db.Order.belongsTo(db.User, {
+    foreignKey: "userId",
+    as: "user",
+});
+
 module.exports = db;

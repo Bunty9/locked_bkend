@@ -15,7 +15,7 @@ module.exports = function (app, passport) {
         [passport.authenticate("user_auth", { session: false })],
         async (req, res) => {
             await Contact.create({
-                userId: req.body.userId,
+                userId: req.user.id,
                 issue: req.body.issue,
                 message: req.body.message,
             })
@@ -34,7 +34,7 @@ module.exports = function (app, passport) {
         "/api/contact/all",
         [passport.authenticate("user_auth", { session: false })],
         async (req, res) => {
-            await Contact.findAll({ where: { userId: req.body.userId } })
+            await Contact.findAll({ where: { userId: req.user.id } })
                 .then((result) => {
                     res.json({ data: result });
                 })

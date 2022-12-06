@@ -49,4 +49,39 @@ module.exports = {
                 });
         };
     },
+    async checkDuplicatePosition(positionId) {
+        const Position = db.Position;
+        await Position.findOne({
+            where: { positionId: positionId },
+        })
+            .then((result) => {
+                if (result) {
+                    return true;
+                } else {
+                    return false;
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                return;
+            });
+    },
+    async checkDuplicateOrder(orderId) {
+        console.log(orderId);
+        const Order = db.Order;
+        await Order.findAll({
+            where: { orderId: orderId },
+        })
+            .then((result) => {
+                if (result) {
+                    return true;
+                } else {
+                    return false;
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                return;
+            });
+    },
 };
