@@ -130,15 +130,12 @@ module.exports = function (app, passport) {
                     .then(async (response) => {
                         console.log(response.data);
                         for (let i = 0; i < response.data.length; i++) {
-                            await Position.findAll({
+                            await Position.findOne({
                                 where: { positionId: response.data[i].id },
                             })
                                 .then(async (result) => {
-                                    console.log(result[0]?.positionId);
-                                    if (
-                                        result[0]?.positionId ===
-                                        response.data[i].id
-                                    ) {
+                                    // console.log(result[0]?.positionId);
+                                    if (result) {
                                         console.log("already exists");
                                     } else {
                                         await Position.create({
