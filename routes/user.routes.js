@@ -43,11 +43,35 @@ module.exports = function (app, passport) {
                 return;
             });
     });
-
+    //update user
+    app.put(
+        "/api/users/update",
+        [passport.authenticate("user_auth", { session: false })],
+        async (req, res) => {
+            const id = req.user.id;
+            const username = req.body.username;
+            const phone = req.body.phone;
+            const address = req.body.address;
+            await User.update(
+                {
+                    username: username,
+                    phone: phone,
+                    address: address,
+                },
+                { where: { id: id } }
+            )
+                .then(() => {
+                    res.json({ msg: "User updated successfully" });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.json({ msg: ">> Error while updating data: ", err });
+                });
+        }
+    );
     app.post("/api/auth/signin", async (req, res) => {
         const email = req.body.email;
         const password = req.body.password;
-
         await User.findOne({ where: { email: email } })
             .then(async (result) => {
                 if (!result) {
@@ -64,7 +88,11 @@ module.exports = function (app, passport) {
                     if (resultPassword === password) {
                         const payload = { email: result.email };
                         const token = jwt.sign(payload, process.env.SECRET);
-                        res.json({ msg: "login success", token: token });
+                        res.json({
+                            msg: "login success",
+                            result,
+                            token: token,
+                        });
                     } else {
                         res.status(401).json({
                             msg: "Password did not match",
@@ -89,6 +117,25 @@ module.exports = function (app, passport) {
                 .catch((err) => {
                     console.log(err);
                     res.json({ msg: ">> Error while compiling data: ", err });
+                });
+        }
+    );
+
+    //save Meta account Id
+    app.post(
+        "/api/users/meta/accountid",
+        [passport.authenticate("user_auth", { session: false })],
+        async (req, res) => {
+            await User.update(
+                { accountId: req.body.accountId },
+                { where: { id: req.user.id } }
+            )
+                .then(() => {
+                    res.json({ msg: "Meta account Id saved" });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.json({ msg: ">> Error while saving data: ", err });
                 });
         }
     );
