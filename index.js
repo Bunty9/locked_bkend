@@ -75,6 +75,7 @@ require("./routes/dashboard.routes")(app, passport);
 require("./routes/meta.routes")(app, passport);
 require("./routes/withdraw.routes")(app, passport);
 require("./routes/contact.routes")(app, passport);
+require("./routes/chart.routes")(app, passport);
 
 // Error handlers
 app.use(function fourOhFourHandler(req, res) {
