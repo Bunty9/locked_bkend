@@ -52,7 +52,7 @@ module.exports = function (app, passport) {
         async (req, res) => {
             await Order.findAll({
                 where: {
-                    createdAt: { [Op.between]: [week2, endDate] },
+                    createdAt: { [Op.between]: [week2, week1] },
                 },
             })
                 .then((week2) => {
@@ -74,7 +74,7 @@ module.exports = function (app, passport) {
         async (req, res) => {
             await Order.findAll({
                 where: {
-                    createdAt: { [Op.between]: [week3, endDate] },
+                    createdAt: { [Op.between]: [week3, week2] },
                 },
             })
                 .then((week3) => {
@@ -96,7 +96,7 @@ module.exports = function (app, passport) {
         async (req, res) => {
             await Order.findAll({
                 where: {
-                    createdAt: { [Op.between]: [week4, endDate] },
+                    createdAt: { [Op.between]: [week4, week3] },
                 },
             })
                 .then((week4) => {
@@ -140,7 +140,7 @@ module.exports = function (app, passport) {
         async (req, res) => {
             await Order.findAll({
                 where: {
-                    createdAt: { [Op.between]: [month2, endDate] },
+                    createdAt: { [Op.between]: [month2, month1] },
                 },
             })
                 .then((month2) => {
@@ -162,7 +162,7 @@ module.exports = function (app, passport) {
         async (req, res) => {
             await Order.findAll({
                 where: {
-                    createdAt: { [Op.between]: [month3, endDate] },
+                    createdAt: { [Op.between]: [month3, month2] },
                 },
             })
                 .then((month3) => {
@@ -184,7 +184,7 @@ module.exports = function (app, passport) {
         async (req, res) => {
             await Order.findAll({
                 where: {
-                    createdAt: { [Op.between]: [month4, endDate] },
+                    createdAt: { [Op.between]: [month4, month3] },
                 },
             })
                 .then((month4) => {
