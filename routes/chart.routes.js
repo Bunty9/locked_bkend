@@ -1,7 +1,7 @@
 const db = require("../models");
 
 const Order = db.Order;
-const { Op } = require("sequelize");
+const { Op, DATE } = require("sequelize");
 
 // weekly earings
 // get all orders where time < this week and send cumulated profit
@@ -36,7 +36,7 @@ module.exports = function (app, passport) {
                 .then((week1) => {
                     let total = 0;
                     for (let i = 0; i < week1.length; i++) {
-                        total = total + parseInt(week1[i].takeProfit);
+                        total = total + parseInt(week1[i].takeProfit); //current price - open price * volume
                     }
                     console.log(total);
                     res.json(total);
@@ -200,6 +200,67 @@ module.exports = function (app, passport) {
                 });
         }
     );
+
+    app.post(
+        "/api/user/cumulated/profit",
+        [passport.authenticate("user_auth")],
+        async (req, res) => {
+            // const now = Date(Date.now());
+            const start = new Date(Date.parse(req.body.start));
+            const end = new Date(Date.parse(req.body.end));
+            await Order.findAll({
+                where: {
+                    userId: req.user.id,
+                    createdAt: { [Op.between]: [start, end] },
+                },
+            })
+                .then((data) => {
+                    console.log(req.user.id);
+                    let total = 0;
+                    for (let i = 0; i < data.length; i++) {
+                        total =
+                            total +
+                            (parseFloat(data[i].currentPrice) -
+                                parseFloat(data[i].openPrice)) *
+                                parseFloat(data[i].volume);
+                    }
+
+                    res.json(total);
+                })
+                .catch((err) => {
+                    res.json(err);
+                });
+        }
+    );
+    app.post(
+        "/api/admin/cumulated/profit",
+        [passport.authenticate("admin_auth")],
+        async (req, res) => {
+            // const now = Date(Date.now());
+            const start = new Date(Date.parse(req.body.start));
+            const end = new Date(Date.parse(req.body.end));
+            await Order.findAll({
+                where: {
+                    createdAt: { [Op.between]: [start, end] },
+                },
+            })
+                .then((data) => {
+                    let total = 0;
+                    for (let i = 0; i < data.length; i++) {
+                        total =
+                            total +
+                            (parseFloat(data[i].currentPrice) -
+                                parseFloat(data[i].openPrice)) *
+                                parseFloat(data[i].volume);
+                    }
+                    console.log(total);
+                    res.json(total);
+                })
+                .catch((err) => {
+                    res.json(err);
+                });
+        }
+    );
 };
 
 //monthly earings
@@ -208,3 +269,9 @@ module.exports = function (app, passport) {
 //% weekly earnings into percent
 
 // table
+
+//admin charts
+//for all users get total profit
+//1. daily cumulative
+//2. weekly cumulative
+//3. monthly culmulative
