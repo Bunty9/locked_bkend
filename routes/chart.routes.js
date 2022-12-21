@@ -38,8 +38,8 @@ module.exports = function (app, passport) {
                     for (let i = 0; i < week1.length; i++) {
                         total = total + parseInt(week1[i].takeProfit); //current price - open price * volume
                     }
-                    console.log(total);
-                    res.json(total);
+                    // console.log(total);
+                    res.json({ totalProfit: total });
                 })
                 .catch((err) => {
                     res.json(err);
@@ -60,8 +60,8 @@ module.exports = function (app, passport) {
                     for (let i = 0; i < week2.length; i++) {
                         total = total + parseInt(week2[i].takeProfit);
                     }
-                    console.log(total);
-                    res.json(total);
+                    // console.log(total);
+                    res.json({ totalProfit: total });
                 })
                 .catch((err) => {
                     res.json(err);
@@ -82,8 +82,8 @@ module.exports = function (app, passport) {
                     for (let i = 0; i < week3.length; i++) {
                         total = total + parseInt(week3[i].takeProfit);
                     }
-                    console.log(total);
-                    res.json(total);
+                    // console.log(total);
+                    res.json({ totalProfit: total });
                 })
                 .catch((err) => {
                     res.json(err);
@@ -104,8 +104,8 @@ module.exports = function (app, passport) {
                     for (let i = 0; i < week4.length; i++) {
                         total = total + parseInt(week4[i].takeProfit);
                     }
-                    console.log(total);
-                    res.json(total);
+                    // console.log(total);
+                    res.json({ totalProfit: total });
                 })
                 .catch((err) => {
                     res.json(err);
@@ -126,8 +126,8 @@ module.exports = function (app, passport) {
                     for (let i = 0; i < month1.length; i++) {
                         total = total + parseInt(month1[i].takeProfit);
                     }
-                    console.log(total);
-                    res.json(total);
+                    // console.log(total);
+                    res.json({ totalProfit: total });
                 })
                 .catch((err) => {
                     res.json(err);
@@ -148,8 +148,8 @@ module.exports = function (app, passport) {
                     for (let i = 0; i < month2.length; i++) {
                         total = total + parseInt(month2[i].takeProfit);
                     }
-                    console.log(total);
-                    res.json(total);
+                    // console.log(total);
+                    res.json({ totalProfit: total });
                 })
                 .catch((err) => {
                     res.json(err);
@@ -170,8 +170,8 @@ module.exports = function (app, passport) {
                     for (let i = 0; i < month3.length; i++) {
                         total = total + parseInt(month3[i].takeProfit);
                     }
-                    console.log(total);
-                    res.json(total);
+                    // console.log(total);
+                    res.json({ totalProfit: total });
                 })
                 .catch((err) => {
                     res.json(err);
@@ -192,8 +192,8 @@ module.exports = function (app, passport) {
                     for (let i = 0; i < month4.length; i++) {
                         total = total + parseInt(month4[i].takeProfit);
                     }
-                    console.log(total);
-                    res.json(total);
+                    // console.log(total);
+                    res.json({ totalProfit: total });
                 })
                 .catch((err) => {
                     res.json(err);
@@ -225,7 +225,7 @@ module.exports = function (app, passport) {
                                 parseFloat(data[i].volume);
                     }
 
-                    res.json(total);
+                    res.json({ totalProfit: total });
                 })
                 .catch((err) => {
                     res.json(err);
@@ -253,8 +253,8 @@ module.exports = function (app, passport) {
                                 parseFloat(data[i].openPrice)) *
                                 parseFloat(data[i].volume);
                     }
-                    console.log(total);
-                    res.json(total);
+                    // console.log(total);
+                    res.json({ totalProfit: total });
                 })
                 .catch((err) => {
                     res.json(err);
