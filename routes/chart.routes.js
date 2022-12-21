@@ -261,6 +261,36 @@ module.exports = function (app, passport) {
                 });
         }
     );
+    app.post(
+        "/api/admin/peruser/profit",
+        [passport.authenticate("admin_auth")],
+        async (req, res) => {
+            // const now = Date(Date.now());
+            const start = new Date(Date.parse(req.body.start));
+            const end = new Date(Date.parse(req.body.end));
+            await Order.findAll({
+                where: {
+                    userId: req.body.userId,
+                    createdAt: { [Op.between]: [start, end] },
+                },
+            })
+                .then((data) => {
+                    let total = 0;
+                    for (let i = 0; i < data.length; i++) {
+                        total =
+                            total +
+                            (parseFloat(data[i].currentPrice) -
+                                parseFloat(data[i].openPrice)) *
+                                parseFloat(data[i].volume);
+                    }
+                    // console.log(total);
+                    res.json({ totalProfit: total });
+                })
+                .catch((err) => {
+                    res.json(err);
+                });
+        }
+    );
 };
 
 //monthly earings
