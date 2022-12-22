@@ -62,6 +62,7 @@ db.WithdrawMethod = require("./withdrawmethod")(sequelize, Sequelize.DataTypes);
 db.Contact = require("./contact")(sequelize, Sequelize.DataTypes);
 db.Position = require("./position")(sequelize, Sequelize.DataTypes);
 db.Order = require("./order")(sequelize, Sequelize.DataTypes);
+db.MetaTrader = require("./metatrader")(sequelize, Sequelize.DataTypes);
 
 db.User.hasMany(db.Dashboard, {
     foreignKey: "userId",
@@ -76,6 +77,14 @@ db.User.hasOne(db.WithdrawSetting, {
     as: "withdrawsetting",
 });
 db.WithdrawSetting.belongsTo(db.User, {
+    foreignKey: "userId",
+    as: "user",
+});
+db.User.hasOne(db.MetaTrader, {
+    foreignKey: "userId",
+    as: "metatrader",
+});
+db.MetaTrader.belongsTo(db.User, {
     foreignKey: "userId",
     as: "user",
 });

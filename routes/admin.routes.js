@@ -18,6 +18,7 @@ module.exports = function (app, passport) {
     const Contact = db.Contact;
     const Position = db.Position;
     const Order = db.Order;
+    const MetaTrader = db.MetaTrader;
 
     app.post(
         "/api/auth/admin/signup",
@@ -111,6 +112,10 @@ module.exports = function (app, passport) {
                         model: Order,
                         as: "orders",
                     },
+                    {
+                        model: MetaTrader,
+                        as: "metatrader",
+                    },
                 ],
             })
                 .then((result) => {
@@ -142,6 +147,66 @@ module.exports = function (app, passport) {
                 .catch((err) => {
                     console.log(err);
                     res.json({ msg: ">> Error while compiling data: ", err });
+                });
+        }
+    );
+
+    //create
+    app.post(
+        "/api/admin/user/mtdetail/create",
+        [passport.authenticate("admin_auth", { session: false })],
+        async (req, res) => {
+            await MetaTrader.create({
+                userId: req.body.userId,
+                serverId: req.body.serverId,
+                serverPassword: req.body.serverPassword,
+                serverName: req.body.serverName,
+            })
+                .then(() => {
+                    res.json({ msg: "MT5 data added successfully" });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.json({ msg: ">> Error while updating data: ", err });
+                });
+        }
+    );
+    //update
+    app.post(
+        "/api/admin/user/mtdetail/update",
+        [passport.authenticate("admin_auth", { session: false })],
+        async (req, res) => {
+            await MetaTrader.update(
+                {
+                    serverId: req.body.serverId,
+                    serverPassword: req.body.serverPassword,
+                    serverName: req.body.serverName,
+                },
+                {
+                    where: { userId: req.body.userId },
+                }
+            )
+                .then(() => {
+                    res.json({ msg: "MT5 data updated successfully" });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.json({ msg: ">> Error while updating data: ", err });
+                });
+        }
+    );
+    //delete
+    app.post(
+        "/api/admin/user/mtdetail/delete",
+        [passport.authenticate("admin_auth", { session: false })],
+        async (req, res) => {
+            await MetaTrader.destroy({ where: { userId: req.body.userId } })
+                .then(() => {
+                    res.json({ msg: "MT5 data deleted successfully" });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.json({ msg: ">> Error while updating data: ", err });
                 });
         }
     );
